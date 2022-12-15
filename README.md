@@ -15,3 +15,15 @@ What the script does:
 6. If a download crashes, a new log will be created in the Survey Crash Log folder.
 
 Note: By default, this script is designed to download surveys from the previous day, or the previous Thursday to Saturday if it is the weekend (based on Israeli time). You can modify the dates in the Additional Filters file to download surveys from any desired date range.
+
+To modify the SurveyId file:
+In the "Survey ID" column, write the number of the survey. This can be found in the URL line when viewing the survey in the Alchemer website.
+In the "Survey Name" column, write the name of the survey for your personal use.
+In the "Download Campaign" column, write either "V" or "X" depending on whether you want to download the contact list for the associated campaign.
+In the "Download Survey Type" column, specify which type of surveys you want to download. If you write "Everything", the script will download all types of surveys (complete, partial, deleted, disqualified). If you want to download a specific type of survey, specify it here (e.g. "partial" to download only partial surveys).
+
+To modify the Additional Filters file:
+1. If you want to set custom dates for the script to download surveys, write "1" under the "Active" column (cell A2). If you leave this as "0", the script will download surveys using the default dates.
+2. To set the Time Offset, which determines the date that the surveys will be shown as, change the number in the corresponding cell. This is useful if you want the date to match your local time zone, as opposed to the time zone used by Alchemer.
+3. To make the script work, you must specify your "api_token" and "api_token_secret" in the corresponding cells (B14 and B15). These can be found in your user settings in Alchemer.
+4. You can also change the "api_version" if desired, but it is recommended to use v4 rather than v5.
