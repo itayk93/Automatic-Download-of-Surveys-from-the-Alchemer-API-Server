@@ -3,7 +3,8 @@ In the script that I wrote, surveys can be automatically downloaded from the API
 Instructions:
 1. Edit the SurveyId file to include the desired survey IDs.
 2. Specify additional filters, such as download dates and client information for the API, in the Additional Filters file.
-3. Run the script from the file Download Surveys.py.
+3. In the code of Download Surveys.py, change the name of the folder you put the script in on line 24. It is originally called "API Gizmo Download".
+4. Run the script from the file Download Surveys.py.
 
 What the script does:
 1. The script will download the surveys from the specified date range, page by page, with each page containing up to 500 rows, and concatenate them into a single data file of responders to the survey.
