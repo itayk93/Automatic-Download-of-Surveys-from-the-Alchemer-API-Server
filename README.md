@@ -1,4 +1,3 @@
-Automatic Download of Surveys from the Alchemer API Server:
 In the script that I wrote, surveys can be automatically downloaded from the API server of Alchemer (formerly known as Survey Gizmo).
 
 Instructions:
