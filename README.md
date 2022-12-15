@@ -17,10 +17,10 @@ What the script does:
 Note: By default, this script is designed to download surveys from the previous day, or the previous Thursday to Saturday if it is the weekend (based on Israeli time). You can modify the dates in the Additional Filters file to download surveys from any desired date range.
 
 To modify the SurveyId file:
-In the "Survey ID" column, write the number of the survey. This can be found in the URL line when viewing the survey in the Alchemer website.
-In the "Survey Name" column, write the name of the survey for your personal use.
-In the "Download Campaign" column, write either "V" or "X" depending on whether you want to download the contact list for the associated campaign.
-In the "Download Survey Type" column, specify which type of surveys you want to download. If you write "Everything", the script will download all types of surveys (complete, partial, deleted, disqualified). If you want to download a specific type of survey, specify it here (e.g. "partial" to download only partial surveys).
+1. In the "Survey ID" column, write the number of the survey. This can be found in the URL line when viewing the survey in the Alchemer website.
+2. In the "Survey Name" column, write the name of the survey for your personal use.
+3. In the "Download Campaign" column, write either "V" or "X" depending on whether you want to download the contact list for the associated campaign.
+4. In the "Download Survey Type" column, specify which type of surveys you want to download. If you write "Everything", the script will download all types of surveys (complete, partial, deleted, disqualified). If you want to download a specific type of survey, specify it here (e.g. "partial" to download only partial surveys).
 
 To modify the Additional Filters file:
 1. If you want to set custom dates for the script to download surveys, write "1" under the "Active" column (cell A2). If you leave this as "0", the script will download surveys using the default dates.
