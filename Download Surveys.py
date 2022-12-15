@@ -18,6 +18,7 @@ from down_func import gizmo_to_xlsx
 from down_func import get_campaign_list
 from down_func import find_total_pages_campaign
 from down_func import add_row_log
+from down_func import convert_json_to_xls
 
 # Define Main Folder Location
 main_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
