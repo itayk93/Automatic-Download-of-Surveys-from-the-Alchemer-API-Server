@@ -7,22 +7,15 @@ import calendar
 import glob
 import traceback
 import inspect, os
+from tqdm import tqdm
 import datetime
-from down_func import download_gizmo_without_camp
-from down_func import download_contacts
-from down_func import flies_to_concat
-from down_func import def_time_offset
-from down_func import set_start_end_date
-from down_func import get_total_count
-from down_func import gizmo_to_xlsx
-from down_func import get_campaign_list
-from down_func import find_total_pages_campaign
-from down_func import add_row_log
-from down_func import convert_json_to_xls
+from down_func import download_gizmo_without_camp, download_contacts, flies_to_concat, \
+    def_time_offset, set_start_end_date, get_total_count, gizmo_to_xlsx, get_campaign_list, find_total_pages_campaign, \
+    add_row_log
 
 # Define Main Folder Location
 main_folder = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-folder_name = "API Gizmo Download"
+folder_name = "API Gizmo Download V2"
 folder_name_loc = main_folder.find(folder_name)
 folder_name_len = len(folder_name)
 main_folder = main_folder[:folder_name_loc + folder_name_len] + "\\"
@@ -43,7 +36,7 @@ client = sg.SurveyGizmo(
     api_token_secret=api_token_secret)
 
 # Define a variable to track the total running time of the script
-working_time_script = datetime.datetime.min
+# working_time_script = datetime.datetime.min
 
 # Generate the current date for the log and future download
 today_name = str(pd.Timestamp(date.today()))[:-9]
@@ -67,6 +60,7 @@ survey_list_details = pd.read_excel(main_folder + "SurveyId.xlsx", sheet_name='S
 survey_list = survey_list_details[['Survey ID']].values.tolist()
 
 # Define the log file
+# log_file_name = main_folder + 'Log\\log_' + (str(today_name)) + '.xlsx'  # Open the log file
 log = pd.DataFrame(
     columns=['time_created', 'survey_id', 'survey_name', 'campaign_id', 'file_created', 'status',
              'total_time_downloading', 'start_date', 'end_date', 'complete', 'partial', 'deleted', 'disqualified',
@@ -83,6 +77,7 @@ for i in range(0, len(survey_list_details)):
         survey_name = df_survey['Survey Name'].values[0]
         download_camp_v_x = df_survey['Download Campaign'].values[0]
         survey_type = df_survey['Download Survey Type'].values[0]
+        save_in_folder = df_survey['Save in Folder'].values[0]
 
         # Specify the days to filter
         day_filter_end_day = set_start_end_date(additional_filters_loc, day_of_the_week_name)[0]
@@ -115,7 +110,8 @@ for i in range(0, len(survey_list_details)):
                               end_date, "", "", "", "")  # Add a row to the log
 
             # get the surveys
-            for page in range(0, total_pages + 1):
+            print("Download pages of responses for survey " + str(survey_id))
+            for page in tqdm(range(0, total_pages + 1)):
                 responses_page = download_gizmo_without_camp(client, survey_id, page, day_filter_end_day_down,
                                                              day_filter_start_day_down, survey_type)
                 path_file = main_folder + 'Output\\' + str(survey_id) + '_responses_page_' + str(page)
@@ -185,8 +181,8 @@ for i in range(0, len(survey_list_details)):
                             total_pages = find_total_pages_campaign(contacts_first_page)
                             # print("total_pages of contacts : " + str(total_pages))
 
-                            for page in range(1, total_pages + 1):
-                                print("Download page " + str(page) + " for campaign " + str(campaign_id))
+                            print("Download contact pages for campaign " + str(campaign_id))
+                            for page in tqdm(range(1, total_pages + 1)):
                                 contacts_page = download_contacts(client, survey_id, page, campaign_id)
 
                                 path_file = main_folder + 'Output\\' + str(survey_id) + '_campaign_' + str(
@@ -203,7 +199,8 @@ for i in range(0, len(survey_list_details)):
 
                         log = add_row_log(log, today_name, main_folder, survey_id, survey_name, campaign_id, "",
                                           "The campaign number is not functioning properly", "", start_date, end_date,
-                                          "", "", "", "")
+                                          "",
+                                          "", "", "")
 
                 # Combine all contacts into a single data file and save it
                 all_contacts = glob.glob(main_folder + 'Output\\' + str(survey_id) + '_campaign_' + "*.xlsx")
@@ -237,10 +234,12 @@ for i in range(0, len(survey_list_details)):
                 os.remove(main_folder + 'Output\\' + str(survey_id) + '_contacts.xlsx')
 
             # If there is no campaign (or contacts file) associated with this survey, the data file name will be changed
+
             elif download_camp_v_x == "X":
                 try:
                     os.rename((main_folder + 'Output\\' + str(survey_id) + '_responses.xlsx'),
                               (main_folder + 'Output\\' + str(survey_id) + '_response_' + yesterday_name + ".xlsx"))
+
                 except:
                     os.remove(main_folder + 'Output\\' + str(survey_id) + '_response_' + yesterday_name + ".xlsx")
                     os.rename((main_folder + 'Output\\' + str(survey_id) + '_responses.xlsx'),
@@ -291,7 +290,7 @@ for i in range(0, len(survey_list_details)):
         # Add the time it took for the script to download the survey to the calculation of the total time of download that will be shown at the end.
         working_time_script = working_time_script + total_time_downloading*24
     except:
-        sur_crash_log_location = main_folder + "Survey Crash Log\\"
+        sur_crash_log_location = main_folder + "Survey crash Log\\"
         current_time_log = datetime.datetime.now().strftime(
             "%Y-%m-%d %H:%M:%S").replace("-", "").replace(":", "").replace(" ", "_")
         with open(sur_crash_log_location + str(survey_id) + "_" + str(current_time_log) + ".txt", "w") as logfile:
@@ -305,9 +304,10 @@ for i in range(0, len(survey_list_details)):
 
         print("Couldn't Download Survey " + str(survey_id))
 
-#Display the total time it took to download the surveys and record the result in the log file
+# Display the total time it took to download the surveys and record the result in the log file
 print("\nThe total time it took to download all of the surveys is " + str(working_time_script)[11:-7])
 
 log = add_row_log(log, today_name, main_folder, "", "", "", "",
                   "The total time it took to download all of the surveys",
                   working_time_script, start_date, end_date, "", "", "", "")
+
